@@ -1,12 +1,13 @@
 #include <SFML/Graphics.hpp>
-#include <bits/stdc++.h>
-using namespace std;
+#include <iostream>
+#include <vector>
+#include <string>
 
 class Options {
 public:
     Options(sf::RenderWindow& window, const std::vector<std::string>& texts) {
-        const int numSquares = texts.size();
-        std::vector<sf::RectangleShape> squares(numSquares);
+        numSquares = texts.size();
+        squares.resize(numSquares);
 
         sf::Font font;
         if (!font.loadFromFile("Arial.ttf")) {
@@ -30,16 +31,15 @@ public:
         float x = (window.getSize().x - 200 * numSquares - 20 * (numSquares - 1)) / 2.f; // Center the row of squares
 
         for (int i = 0; i < numSquares; ++i) {
-            squares[i].setSize(sf::Vector2f(200.f, 100.f));
-            squares[i].setFillColor(sf::Color::Blue);
-            squares[i].setPosition(x, 250.f);
+            squares[i].rectangle.setSize(sf::Vector2f(200.f, 100.f));
+            squares[i].rectangle.setFillColor(sf::Color::Blue);
+            squares[i].rectangle.setPosition(x, 250.f);
 
-            sf::Text text(texts[i], font, 20);
-            text.setFillColor(sf::Color::White);
-            text.setPosition(x + 30.f, 290.f);
-
-            window.draw(squares[i]);
-            window.draw(text);
+            squares[i].text.setString(texts[i]);
+            squares[i].text.setFont(font);
+            squares[i].text.setCharacterSize(20);
+            squares[i].text.setFillColor(sf::Color::White);
+            squares[i].text.setPosition(x + 30.f, 290.f);
 
             x += 220.f;
         }
@@ -47,8 +47,20 @@ public:
         window.draw(homeContainer);
         window.draw(homeText);
         window.draw(headline);
+        for (const auto& shape : squares) {
+            window.draw(shape.rectangle);
+            window.draw(shape.text);
+        }
         window.display();
     }
+
+    struct ShapeWithText {
+        sf::RectangleShape rectangle;
+        sf::Text text;
+    };
+
+    int numSquares;
+    std::vector<ShapeWithText> squares;
 };
 
 class Tier1 {
@@ -61,9 +73,91 @@ public:
             "Inventory"
         };
 
-        Options(window, texts);
+        Options options(window, texts);
+        handleEvents(window, options);
+    }
+
+    void Financials(sf::RenderWindow& window) {
+        std::cout << "Financials function called." << std::endl;
+        std::vector<std::string> texts = {
+            "Show",
+            "Add"
+        };
+
+        Options options(window,texts);
+    }
+
+    void Stats(sf::RenderWindow& window) {
+        std::cout << "Stats function called." << std::endl;
+        std::vector<std::string> texts = {
+            "Show",
+            "Add"
+        };
+
+        Options options(window,texts);
+    }
+
+    void Recommendations(sf::RenderWindow& window) {
+        std::cout << "Recommendations function called." << std::endl;
+        std::vector<std::string> texts = {
+            "Show",
+            "Add"
+        };
+
+        Options options(window,texts);
+    }
+
+    void Inventory(sf::RenderWindow& window) {
+        std::cout << "Inventory function called." << std::endl;
+        std::vector<std::string> texts = {
+            "Show",
+            "Add"
+        };
+
+        Options options(window,texts);
+    }
+
+    void handleEvents(sf::RenderWindow& window, Options& options) {
+        while (window.isOpen()) {
+            sf::Event event;
+            while (window.pollEvent(event)) {
+                if (event.type == sf::Event::Closed)
+                    window.close();
+
+                if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
+                    sf::Vector2i mousePosition = sf::Mouse::getPosition(window);
+                    for (int i = 0; i < options.numSquares; ++i) {
+                        if (options.squares[i].rectangle.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePosition))) {
+                            switch (i) {
+                                case 0:
+                                    window.clear();
+                                    Financials(window);
+                                    
+                                    break;
+                                case 1:
+                                    window.clear();
+                                    Stats(window);
+                                    break;
+                                case 2:
+                                    window.clear();
+                                    Recommendations(window);
+                                    break;
+                                case 3:
+                                    window.clear();
+                                    Inventory(window);
+                                    break;
+                                default:
+                                    break;
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+        }
     }
 };
+
 
 class Tier2 {
 public:
@@ -77,6 +171,87 @@ public:
 
         Options(window, texts);
     }
+
+    void Financials(sf::RenderWindow& window) {
+        std::cout << "Financials function called." << std::endl;
+        std::vector<std::string> texts = {
+            "Show",
+            "Add"
+        };
+
+        Options options(window,texts);
+    }
+
+    void Stats(sf::RenderWindow& window) {
+        std::cout << "Stats function called." << std::endl;
+        std::vector<std::string> texts = {
+            "Show",
+            "Add"
+        };
+
+        Options options(window,texts);
+    }
+
+    void Recommendations(sf::RenderWindow& window) {
+        std::cout << "Recommendations function called." << std::endl;
+        std::vector<std::string> texts = {
+            "Show",
+            "Add"
+        };
+
+        Options options(window,texts);
+    }
+
+    void Inventory(sf::RenderWindow& window) {
+        std::cout << "Inventory function called." << std::endl;
+        std::vector<std::string> texts = {
+            "Show",
+            "Add"
+        };
+
+        Options options(window,texts);
+    }
+
+    void handleEvents(sf::RenderWindow& window, Options& options) {
+        while (window.isOpen()) {
+            sf::Event event;
+            while (window.pollEvent(event)) {
+                if (event.type == sf::Event::Closed)
+                    window.close();
+
+                if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
+                    sf::Vector2i mousePosition = sf::Mouse::getPosition(window);
+                    for (int i = 0; i < options.numSquares; ++i) {
+                        if (options.squares[i].rectangle.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePosition))) {
+                            switch (i) {
+                                case 0:
+                                    window.clear();
+                                    Financials(window);
+                                    
+                                    break;
+                                case 1:
+                                    window.clear();
+                                    Stats(window);
+                                    break;
+                                case 2:
+                                    window.clear();
+                                    Recommendations(window);
+                                    break;
+                                case 3:
+                                    window.clear();
+                                    Inventory(window);
+                                    break;
+                                default:
+                                    break;
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
 };
 
 class Manufacturer {
@@ -91,6 +266,87 @@ public:
 
         Options(window, texts);
     }
+
+    void Financials(sf::RenderWindow& window) {
+        std::cout << "Financials function called." << std::endl;
+        std::vector<std::string> texts = {
+            "Show",
+            "Add"
+        };
+
+        Options options(window,texts);
+    }
+
+    void Stats(sf::RenderWindow& window) {
+        std::cout << "Stats function called." << std::endl;
+        std::vector<std::string> texts = {
+            "Show",
+            "Add"
+        };
+
+        Options options(window,texts);
+    }
+
+    void Recommendations(sf::RenderWindow& window) {
+        std::cout << "Recommendations function called." << std::endl;
+        std::vector<std::string> texts = {
+            "Show",
+            "Add"
+        };
+
+        Options options(window,texts);
+    }
+
+    void Inventory(sf::RenderWindow& window) {
+        std::cout << "Inventory function called." << std::endl;
+        std::vector<std::string> texts = {
+            "Show",
+            "Add"
+        };
+
+        Options options(window,texts);
+    }
+
+    void handleEvents(sf::RenderWindow& window, Options& options) {
+        while (window.isOpen()) {
+            sf::Event event;
+            while (window.pollEvent(event)) {
+                if (event.type == sf::Event::Closed)
+                    window.close();
+
+                if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
+                    sf::Vector2i mousePosition = sf::Mouse::getPosition(window);
+                    for (int i = 0; i < options.numSquares; ++i) {
+                        if (options.squares[i].rectangle.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePosition))) {
+                            switch (i) {
+                                case 0:
+                                    window.clear();
+                                    Financials(window);
+                                    
+                                    break;
+                                case 1:
+                                    window.clear();
+                                    Stats(window);
+                                    break;
+                                case 2:
+                                    window.clear();
+                                    Recommendations(window);
+                                    break;
+                                case 3:
+                                    window.clear();
+                                    Inventory(window);
+                                    break;
+                                default:
+                                    break;
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
 };
 
 class Distributor {
@@ -105,6 +361,87 @@ public:
 
         Options(window, texts);
     }
+
+    void Financials(sf::RenderWindow& window) {
+        std::cout << "Financials function called." << std::endl;
+        std::vector<std::string> texts = {
+            "Show",
+            "Add"
+        };
+
+        Options options(window,texts);
+    }
+
+    void Stats(sf::RenderWindow& window) {
+        std::cout << "Stats function called." << std::endl;
+        std::vector<std::string> texts = {
+            "Show",
+            "Add"
+        };
+
+        Options options(window,texts);
+    }
+
+    void Recommendations(sf::RenderWindow& window) {
+        std::cout << "Recommendations function called." << std::endl;
+        std::vector<std::string> texts = {
+            "Show",
+            "Add"
+        };
+
+        Options options(window,texts);
+    }
+
+    void Inventory(sf::RenderWindow& window) {
+        std::cout << "Inventory function called." << std::endl;
+        std::vector<std::string> texts = {
+            "Show",
+            "Add"
+        };
+
+        Options options(window,texts);
+    }
+
+    void handleEvents(sf::RenderWindow& window, Options& options) {
+        while (window.isOpen()) {
+            sf::Event event;
+            while (window.pollEvent(event)) {
+                if (event.type == sf::Event::Closed)
+                    window.close();
+
+                if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
+                    sf::Vector2i mousePosition = sf::Mouse::getPosition(window);
+                    for (int i = 0; i < options.numSquares; ++i) {
+                        if (options.squares[i].rectangle.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePosition))) {
+                            switch (i) {
+                                case 0:
+                                    window.clear();
+                                    Financials(window);
+                                    
+                                    break;
+                                case 1:
+                                    window.clear();
+                                    Stats(window);
+                                    break;
+                                case 2:
+                                    window.clear();
+                                    Recommendations(window);
+                                    break;
+                                case 3:
+                                    window.clear();
+                                    Inventory(window);
+                                    break;
+                                default:
+                                    break;
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
 };
 
 class Retailer {
@@ -119,6 +456,87 @@ public:
 
         Options(window, texts);
     }
+
+    void Financials(sf::RenderWindow& window) {
+        std::cout << "Financials function called." << std::endl;
+        std::vector<std::string> texts = {
+            "Show",
+            "Add"
+        };
+
+        Options options(window,texts);
+    }
+
+    void Stats(sf::RenderWindow& window) {
+        std::cout << "Stats function called." << std::endl;
+        std::vector<std::string> texts = {
+            "Show",
+            "Add"
+        };
+
+        Options options(window,texts);
+    }
+
+    void Recommendations(sf::RenderWindow& window) {
+        std::cout << "Recommendations function called." << std::endl;
+        std::vector<std::string> texts = {
+            "Show",
+            "Add"
+        };
+
+        Options options(window,texts);
+    }
+
+    void Inventory(sf::RenderWindow& window) {
+        std::cout << "Inventory function called." << std::endl;
+        std::vector<std::string> texts = {
+            "Show",
+            "Add"
+        };
+
+        Options options(window,texts);
+    }
+
+    void handleEvents(sf::RenderWindow& window, Options& options) {
+        while (window.isOpen()) {
+            sf::Event event;
+            while (window.pollEvent(event)) {
+                if (event.type == sf::Event::Closed)
+                    window.close();
+
+                if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
+                    sf::Vector2i mousePosition = sf::Mouse::getPosition(window);
+                    for (int i = 0; i < options.numSquares; ++i) {
+                        if (options.squares[i].rectangle.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePosition))) {
+                            switch (i) {
+                                case 0:
+                                    window.clear();
+                                    Financials(window);
+                                    
+                                    break;
+                                case 1:
+                                    window.clear();
+                                    Stats(window);
+                                    break;
+                                case 2:
+                                    window.clear();
+                                    Recommendations(window);
+                                    break;
+                                case 3:
+                                    window.clear();
+                                    Inventory(window);
+                                    break;
+                                default:
+                                    break;
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
 };
 
 //........................................................................
@@ -164,14 +582,6 @@ public:
             "Retailer"
         };
 
-        sf::RectangleShape homeContainer(sf::Vector2f(100.f, 50.f));
-        homeContainer.setFillColor(sf::Color::Blue);
-        homeContainer.setPosition(20.f, 20.f);
-
-        sf::Text homeText("Home", font, 20);
-        homeText.setFillColor(sf::Color::White);
-        homeText.setPosition(30.f, 30.f);
-
         sf::Text headline("Choose from the following options", font, 40);
         headline.setFillColor(sf::Color::White);
         headline.setStyle(sf::Text::Bold);
@@ -194,8 +604,7 @@ public:
             x += 220.f;
         }
 
-        window.draw(homeContainer);
-        window.draw(homeText);
+        
         window.draw(headline);
         window.display();
 
