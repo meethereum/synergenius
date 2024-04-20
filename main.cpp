@@ -2,12 +2,14 @@
 #include <iostream>
 #include <vector>
 #include <string>
-#include <sstream> // Include <sstream> for std::ostringstream
+#include <sstream> 
 #include <chrono>
 #include <thread>
 #include "mysql_functions.h"
 using namespace std;
-
+bool flag=true;
+std::string username = "";
+std::string password = "";
 struct ShapeWithText {
         sf::RectangleShape rectangle;
         sf::Text text;
@@ -33,7 +35,7 @@ class exits
     exits()
     {
         sf::RenderWindow window(sf::VideoMode::getDesktopMode(), "Genesis trial", sf::Style::Fullscreen);
-        Options options(window,{"financials","stats","recomendations","inventory"});
+        Options options(window,{"financials","recomendations","inventory"});
     }
 };
 class inputs{
@@ -43,8 +45,10 @@ class inputs{
         vector<string>database3={" 100 "," 200 "," 45 "};
     void add()
     {
+        cout<<endl<<endl;
+        cout<<".................................................................."<<endl<<endl;
         
-        cout<<"Do you Want to add Inventory :"<<endl<<"Yes/No"<<endl;
+        cout<<"Do you Want to add Inventory? "<<endl<<"Yes/No"<<endl;
         string req;
         cin>>req;
         if(tolower(req[0])=='y')
@@ -68,12 +72,17 @@ class inputs{
         }
         else
         {
-            cout<<"do you want to see the inventory : (y,n) "<<endl;
+            cout<<"do you want to see the inventory? (y,n) "<<endl;
             char ab;
             cin>>ab;
             if(ab=='y')
             {
                 display();
+                cout<<"Do you want to exit? (press any key and enter ) ";
+                string a;
+                cin>>a;
+                exits obj;
+
             }
             else
             {
@@ -86,13 +95,15 @@ class inputs{
         //sql command to display 
             for(int i=0;i<database1.size();i++)
             {
-                cout<<".....................................................................";
-                cout<<endl;
+                cout<<endl<<endl;
+                cout<<".................................................................."<<endl<<endl;
+        
                 cout<<"Name of the Product : "<<database1[i]<<endl;
                 cout<<"Price of the Product : "<<database2[i]<<endl;
                 cout<<"Quantity of the Product : "<<database3[i]<<endl;
-                cout<<".....................................................................";
-                cout<<endl;
+                cout<<endl<<endl;
+                cout<<".................................................................."<<endl<<endl;
+        
             }
         }
 };
@@ -100,16 +111,18 @@ class inputs{
 
     void funtionality::Financials() {
         
-        cout<<"............................................................."<<endl;
+        cout<<endl<<endl;
+        cout<<".................................................................."<<endl<<endl;
+        
         cout<<endl<<"1] Show financials "<<endl<<endl<<"2] exit "<<endl<<endl;
-        cout<<"............................................................."<<endl<<endl;
+        
         int n;
         cin>>n;
         if(n==1)
         {
             //mysql query
             char temp;
-            cout<<"do you want to exit (y,n) ";
+            cout<<"do you want to exit? (y,n) ";
             cin>>temp;
             if (temp=='y')
             {
@@ -133,7 +146,7 @@ class inputs{
         {
             //mysql query
             char temp;
-            cout<<"do you want to exit (y,n) ";
+            cout<<"do you want to exit? (y,n) ";
             cin>>temp;
             if (temp=='y')
             {
@@ -146,8 +159,43 @@ class inputs{
         }
         
     }
-
+    
     void  funtionality::Recommendations() {
+        cout<<endl<<endl;
+        cout<<".................................................................."<<endl<<endl;
+        
+        char temp;
+        if(flag)
+        {
+            cout<<"Do you Want to Give Feedback? (y/n) ";
+            cin>>temp;
+            flag=false;
+        }
+        if(temp=='y' || flag==false)
+        {
+            cout<<"Give any Feedback Related to our service / bugs / improvements we should do / etc / custumer support"<<endl<<endl;
+            string s;
+            cin>>s;
+            cout<<endl<<endl;
+            cout<<"Do you want to give another feedback? (y/n) ";
+            char ch;
+            cin>>ch;
+            if(ch=='y')
+            {
+                Recommendations();
+            }
+            else
+            {
+            cout<<"Do you want to exit? (press any key and enter ) ";
+            string a;
+            cin>>a;
+            exits obj;
+            }
+        }
+        else
+        {
+            exits obj;
+        }
         
         
     }
@@ -157,10 +205,6 @@ class inputs{
         obj.add();
         
     }
-    
-        
-   
-
 
 
     Options::Options(sf::RenderWindow& window, const std::vector<std::string>& texts) {
@@ -213,26 +257,17 @@ class inputs{
                         if (this->squares[i].rectangle.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePosition))) {
                             switch (i) {
                                 case 0:
-                                    cout << i << endl;
                                     window.clear(); 
                                     window.close();
                                     Financials();
                                     break;
                                 case 1:
-                                    cout << i << endl;
                                     window.clear();
                                     window.close();
-                                    Stats();
+                                    flag=true;
+                                    Recommendations();
                                     break;
                                 case 2:
-                                    cout << i << endl;
-                                    window.clear();
-                                    window.close();
-                                    Recommendations();
-                                    // addint();
-                                    break;
-                                case 3:
-                                    cout << i << endl;
                                     window.clear();
                                     window.close();
                                     Inventory();
@@ -253,7 +288,7 @@ class inputs{
 //......................................................................................
 
 
-class LoginPage: public inputs, public output, public funtionality{
+class LoginPage: public inputs, public funtionality{
 
 public:
     LoginPage(sf::RenderWindow& window) {
@@ -507,8 +542,8 @@ private:
     // Function to handle login action
 void loginAction(sf::RenderWindow& window) {
     // Retrieve the username and password entered by the user
-    std::string username = usernameString;
-    std::string password = passwordString;
+    username = usernameString;
+    password = passwordString;
 
     // Define MySQL connection details
     struct connection_details mysql_details = {
@@ -542,7 +577,7 @@ void loginAction(sf::RenderWindow& window) {
     if (row) {
         // User authenticated successfully
         window.clear();
-        Options Options(window,{"financials","stats","recomendations","inventory"});
+        Options Options(window,{"financials","recomendations","inventory"});
         std::cout<<"give options to users";
     } else {
         // Invalid credentials
