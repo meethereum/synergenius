@@ -2,10 +2,16 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <sstream> // Include <sstream> for std::ostringstream
+#include <chrono>
+#include <thread>
+#include "mysql_functions.h"
 using namespace std;
-class Options {
-public:
-    Options(sf::RenderWindow& window, const std::vector<std::string>& texts) {
+
+class Options2{
+    public:
+    
+    Options2(sf::RenderWindow& window, const std::vector<std::string>& texts) {
         numSquares = texts.size();
         squares.resize(numSquares);
 
@@ -14,14 +20,6 @@ public:
             std::cerr << "Error loading font file" << std::endl;
             return;
         }
-
-        // sf::RectangleShape homeContainer(sf::Vector2f(100.f, 50.f));
-        // homeContainer.setFillColor(sf::Color::Blue);
-        // homeContainer.setPosition(20.f, 20.f);
-
-        // sf::Text homeText("Home", font, 20);
-        // homeText.setFillColor(sf::Color::White);
-        // homeText.setPosition(30.f, 30.f);
 
         sf::Text headline("Choose from the following options", font, 40);
         headline.setFillColor(sf::Color::White);
@@ -44,14 +42,291 @@ public:
             x += 220.f;
         }
 
-        // window.draw(homeContainer);
-        // window.draw(homeText);
         window.draw(headline);
         for (const auto& shape : squares) {
             window.draw(shape.rectangle);
             window.draw(shape.text);
         }
         window.display();
+
+        while (window.isOpen()) {
+            sf::Event event;
+            while (window.pollEvent(event)) {
+                if (event.type == sf::Event::Closed)
+                    window.close();
+
+                if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
+                    sf::Vector2i mousePosition = sf::Mouse::getPosition(window);
+                    for (int i = 0; i < this->numSquares; ++i) {
+                        if (this->squares[i].rectangle.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePosition))) {
+                            switch (i) {
+                                case 0:
+                                    cout << i << endl;
+                                    window.clear();
+                                    window.close();
+                                    // Financials();
+                                    break;
+                                case 1:
+                                    cout << i << endl;
+                                    window.clear();
+                                    window.close();
+                                    // Stats();
+                                    break;
+                                case 2:
+                                    cout << i << endl;
+                                    window.clear();
+                                    window.close();
+                                    // Recommendations();
+                                    
+                                    break;
+                                case 3:
+                                    cout << i << endl;
+                                    window.clear();
+                                    window.close();
+                                    // Inventory();
+                                    break;
+                                default:
+                                    break;
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    struct ShapeWithText {
+        sf::RectangleShape rectangle;
+        sf::Text text;
+    };
+
+    int numSquares;
+    std::vector<ShapeWithText> squares;
+
+};
+class exits
+{
+    public:
+    exits()
+    {
+        sf::RenderWindow window(sf::VideoMode::getDesktopMode(), "Genesis trial", sf::Style::Fullscreen);
+        Options2 options2(window,{"financials","stats","recomendations","inventory"});
+    }
+};
+class inputs{
+    public:
+    vector<string>database1={" Boat Airbudds 141 "," Boat Power Bank 4000 "," Boat Stone 1200 "};
+        vector<string>database2={" 1500 "," 900 "," 4000 "};
+        vector<string>database3={" 100 "," 200 "," 45 "};
+    void add()
+    {
+        
+        cout<<"Do you Want to add Inventory :"<<endl<<"Yes/No"<<endl;
+        string req;
+        cin>>req;
+        if(tolower(req[0])=='y')
+        {
+            cout<<"Enter The Name Of the Product : "<<endl;
+            string temp;
+            cin>>temp;
+            database1.push_back(temp);
+            cout<<"Enter The Prize Of the Product : "<<endl;
+            string temp1;
+            cin>>temp1;
+            database2.push_back(temp1);
+            cout<<"Enter The Quantity Of the Product : "<<endl;
+            string temp2;
+            cin>>temp2;
+            database3.push_back(temp2);
+            
+            //add data to sql database
+            
+            add();
+        }
+        else
+        {
+            cout<<"do you want to see the inventory : (y,n) "<<endl;
+            char ab;
+            cin>>ab;
+            if(ab=='y')
+            {
+                display();
+            }
+            else
+            {
+                exits obj;
+            }
+        }
+    }
+        void display()
+        {
+        //sql command to display 
+            for(int i=0;i<database1.size();i++)
+            {
+                cout<<".....................................................................";
+                cout<<endl;
+                cout<<"Name of the Product : "<<database1[i]<<endl;
+                cout<<"Price of the Product : "<<database2[i]<<endl;
+                cout<<"Quantity of the Product : "<<database3[i]<<endl;
+                cout<<".....................................................................";
+                cout<<endl;
+            }
+        }
+};
+
+class funtionality
+{
+    public:
+    void Financials() {
+        
+        cout<<"............................................................."<<endl;
+        cout<<endl<<"1] Show financials "<<endl<<endl<<"2] exit "<<endl<<endl;
+        cout<<"............................................................."<<endl<<endl;
+        int n;
+        cin>>n;
+        if(n==1)
+        {
+            //mysql query
+            char temp;
+            cout<<"do you want to exit (y,n) ";
+            cin>>temp;
+            if (temp=='y')
+            {
+                exits obj;
+            }
+        }
+        else
+        {
+            exits obj;
+        }
+        
+    }
+
+    void Stats() {
+        cout<<"............................................................."<<endl;
+        cout<<endl<<"1] Show Stats "<<endl<<endl<<"2] exit "<<endl<<endl;
+        cout<<"............................................................."<<endl<<endl;
+        int n;
+        cin>>n;
+        if(n==1)
+        {
+            //mysql query
+            char temp;
+            cout<<"do you want to exit (y,n) ";
+            cin>>temp;
+            if (temp=='y')
+            {
+                exits obj;
+            }
+        }
+        else
+        {
+            exits obj;
+        }
+        
+    }
+
+    void Recommendations() {
+        
+        
+    }
+
+    void Inventory() {
+        inputs obj;
+        obj.add();
+        
+    }
+    
+        
+   
+
+};
+class Options :public funtionality{
+public:
+    Options(sf::RenderWindow& window, const std::vector<std::string>& texts) {
+        numSquares = texts.size();
+        squares.resize(numSquares);
+
+        sf::Font font;
+        if (!font.loadFromFile("Arial.ttf")) {
+            std::cerr << "Error loading font file" << std::endl;
+            return;
+        }
+
+        sf::Text headline("Choose from the following options", font, 40);
+        headline.setFillColor(sf::Color::White);
+        headline.setStyle(sf::Text::Bold);
+        headline.setPosition((window.getSize().x - headline.getLocalBounds().width) / 2, 50.f);
+
+        float x = (window.getSize().x - 200 * numSquares - 20 * (numSquares - 1)) / 2.f; // Center the row of squares
+
+        for (int i = 0; i < numSquares; ++i) {
+            squares[i].rectangle.setSize(sf::Vector2f(200.f, 100.f));
+            squares[i].rectangle.setFillColor(sf::Color::Blue);
+            squares[i].rectangle.setPosition(x, 250.f);
+
+            squares[i].text.setString(texts[i]);
+            squares[i].text.setFont(font);
+            squares[i].text.setCharacterSize(20);
+            squares[i].text.setFillColor(sf::Color::White);
+            squares[i].text.setPosition(x + 30.f, 290.f);
+
+            x += 220.f;
+        }
+
+        window.draw(headline);
+        for (const auto& shape : squares) {
+            window.draw(shape.rectangle);
+            window.draw(shape.text);
+        }
+        window.display();
+
+        while (window.isOpen()) {
+            sf::Event event;
+            while (window.pollEvent(event)) {
+                if (event.type == sf::Event::Closed)
+                    window.close();
+
+                if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
+                    sf::Vector2i mousePosition = sf::Mouse::getPosition(window);
+                    for (int i = 0; i < this->numSquares; ++i) {
+                        if (this->squares[i].rectangle.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePosition))) {
+                            switch (i) {
+                                case 0:
+                                    cout << i << endl;
+                                    window.clear();
+                                    window.close();
+                                    Financials();
+                                    break;
+                                case 1:
+                                    cout << i << endl;
+                                    window.clear();
+                                    window.close();
+                                    Stats();
+                                    break;
+                                case 2:
+                                    cout << i << endl;
+                                    window.clear();
+                                    window.close();
+                                    Recommendations();
+                                    // addint();
+                                    break;
+                                case 3:
+                                    cout << i << endl;
+                                    window.clear();
+                                    window.close();
+                                    Inventory();
+                                    break;
+                                default:
+                                    break;
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+        }
     }
 
     struct ShapeWithText {
@@ -63,281 +338,325 @@ public:
     std::vector<ShapeWithText> squares;
 };
 
-class inputs{
-    public:
-    void add()
-    {
-        cout<<"Do you Want to add Inventory :"<<endl<<"Yes/No"<<endl;
-        string req;
-        cin>>req;
-        if(tolower(req[0])=='y')
-        {
-            //add data to sql database
-            
-            add();
-        }
-        else
-        {
-            return;
-        }
-    }
-};
 class output{
     public:
-    void display()
-    {
-        //sql command to display 
-    }
-};
-
-class funtionality
-{
-    public:
-    void Financials(sf::RenderWindow& window) {
-        std::cout << "Financials function called." << std::endl;
-        std::vector<std::string> texts = {
-            "Show"
-        };
-
-        Options options(window,texts);
-    }
-
-    void Stats(sf::RenderWindow& window) {
-        std::cout << "Stats function called." << std::endl;
-        std::vector<std::string> texts = {
-            "Show"
-        };
-
-        Options options(window,texts);
-    }
-
-    void Recommendations(sf::RenderWindow& window) {
-        std::cout << "Recommendations function called." << std::endl;
-        std::vector<std::string> texts = {
-            "Show",
-            "Add"
-        };
-
-        Options options(window,texts);
-    }
-
-    void Inventory(sf::RenderWindow& window) {
-        std::cout << "Inventory function called." << std::endl;
-        std::vector<std::string> texts = {
-            "Show",
-            "Add"
-        };
-
-        Options options(window,texts);
-    }
-
-    void handleEvents(sf::RenderWindow& window, Options& options) {
-        while (window.isOpen()) {
-            sf::Event event;
-            while (window.pollEvent(event)) {
-                if (event.type == sf::Event::Closed)
-                    window.close();
-
-                if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
-                    sf::Vector2i mousePosition = sf::Mouse::getPosition(window);
-                    for (int i = 0; i < options.numSquares; ++i) {
-                        if (options.squares[i].rectangle.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePosition))) {
-                            switch (i) {
-                                case 0:
-                                    window.clear();
-                                    Financials(window);
-                                    
-                                    break;
-                                case 1:
-                                    window.clear();
-                                    Stats(window);
-                                    break;
-                                case 2:
-                                    window.clear();
-                                    Recommendations(window);
-                                    break;
-                                case 3:
-                                    window.clear();
-                                    Inventory(window);
-                                    break;
-                                default:
-                                    break;
-                            }
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-};
-
-class Tier1 :public inputs,public output,public funtionality,public Options{
-public:
-    Tier1(sf::RenderWindow& window, string className) : Options(window, { "Financials",
-        "Stats",
-        "Recommendations",
-        "Inventory"}) {
-    handleEvents(window, *this); // Call handleEvents on 'this' object
-}
-
+    
 };
 
 
-class Tier2 :public inputs,public output,public funtionality ,public Options{
-public:
-    Tier2(sf::RenderWindow& window,string className) : Options(window, { "Financials",
-        "Stats",
-        "Recommendations",
-        "Inventory"}) {
-    handleEvents(window, *this); // Call handleEvents on 'this' object
-}
 
-};
-
-class Manufacturer :public inputs,public output,public funtionality ,public Options{
-public:
-    Manufacturer(sf::RenderWindow& window,string className) : Options(window, { "Financials",
-        "Stats",
-        "Recommendations",
-        "Inventory"}) {
-    handleEvents(window, *this); // Call handleEvents on 'this' object
-}
-};
-
-class Distributor :public inputs,public output,public funtionality ,public Options {
-public:
-    Distributor(sf::RenderWindow& window,string className) : Options(window, { "Financials",
-        "Stats",
-        "Recommendations",
-        "Inventory"}) {
-    handleEvents(window, *this); // Call handleEvents on 'this' object
-}
-
-};
-
-class Retailer :public inputs,public output,public funtionality ,public Options{
-public:
-    Retailer(sf::RenderWindow& window,string className) : Options(window, { "Financials",
-        "Stats",
-        "Recommendations",
-        "Inventory"}) {
-    handleEvents(window, *this); // Call handleEvents on 'this' object
-}
-};
-
-//........................................................................
-
-void  Tier01(sf::RenderWindow& window,string className){
-    window.clear();
-    Tier1 tire(window,className);
-}
-void  Tier02(sf::RenderWindow& window,string className){
-    window.clear();
-    Tier2 tiree(window,className);
-}
-void  manu0(sf::RenderWindow& window,string className){
-    window.clear();
-    Manufacturer Manu(window,className);
-}
-void  distri0(sf::RenderWindow& window,string className){
-    window.clear();
-    Distributor Distri(window,className);
-}
-void  retail0(sf::RenderWindow& window,string className){
-    window.clear();
-    Retailer Retail(window,className);
-}
 
 //...............................................................................................
-class home
-{
-public:
-    home(sf::RenderWindow& window) {
-        // Load font
-        sf::Font font;
-        font.loadFromFile("Arial.ttf");
-
-        const int numSquares = 5;
-        std::vector<sf::RectangleShape> squares(numSquares);
-
-        std::vector<std::string> texts = {
-            "Tier1 Supplier",
-            "Tier2 Supplier",
-            "Manufacturer",
-            "Distributor",
-            "Retailer"
-        };
-        vector<string>callClasses={"Tier1","Tier2","Manufacturer","Distributor","Retailer"};
-        sf::Text headline("Choose from the following options", font, 40);
-        headline.setFillColor(sf::Color::White);
-        headline.setStyle(sf::Text::Bold);
-        headline.setPosition((window.getSize().x - headline.getLocalBounds().width) / 2, 50.f);
-
-        float x = (window.getSize().x - 200 * numSquares - 20 * (numSquares - 1)) / 2.f; // Center the row of squares
-
-        for (int i = 0; i < numSquares; ++i) {
-            squares[i].setSize(sf::Vector2f(200.f, 100.f));
-            squares[i].setFillColor(sf::Color::Blue);
-            squares[i].setPosition(x, 250.f);
-
-            sf::Text text(texts[i], font, 20);
-            text.setFillColor(sf::Color::White);
-            text.setPosition(x + 30.f, 290.f);
-
-            window.draw(squares[i]);
-            window.draw(text);
-
-            x += 220.f;
-        }
-
-        
-        window.draw(headline);
-        window.display();
-
-        while (window.isOpen()) {
-            sf::Event event;
-            while (window.pollEvent(event)) {
-                if (event.type == sf::Event::Closed)
-                    window.close();
-
-                if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
-                    sf::Vector2i mousePosition = sf::Mouse::getPosition(window);
-                    for (int i = 0; i < numSquares; ++i) {
-                        if (squares[i].getGlobalBounds().contains(mousePosition.x, mousePosition.y)) {
-                            switch (i) {
-                                case 0:
-                                    Tier01(window,callClasses[i]);
-                                    break;
-                                case 1:
-                                    Tier02(window,callClasses[i]);
-                                    break;
-                                case 2:
-                                    manu0(window,callClasses[i]);
-                                    break;
-                                case 3:
-                                    distri0(window,callClasses[i]);
-                                    break;
-                                case 4:
-                                    retail0(window,callClasses[i]);
-                                    break;
-                                default:
-                                    break;
-                            }
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-    }
-};
 
 //......................................................................................
 
+
+class LoginPage: public inputs, public output, public funtionality{
+
+public:
+    LoginPage(sf::RenderWindow& window) {
+        if (!font.loadFromFile("Arial.ttf")) {
+            std::cerr << "Error loading font file" << std::endl;
+            return;
+        }
+
+        // Set up text parameters
+        setupTextParameters();
+
+        // Set up input box parameters
+        setupInputBoxParameters();
+
+        // Set up cursor parameters
+        setupCursorParameters();
+
+        // Set up login button parameters
+        setupLoginButtonParameters();
+
+        // Start the main loop
+        mainLoop(window);
+    }
+
+private:
+    // Font
+    sf::Font font;
+
+    // Username
+    sf::Text usernameLabel;
+    sf::RectangleShape usernameInputBox;
+    sf::Text usernameText;
+
+    // Password
+    sf::Text passwordLabel;
+    sf::RectangleShape passwordInputBox;
+    sf::Text passwordText;
+
+    // Login button
+    sf::RectangleShape loginButton;
+    sf::Text loginButtonText;
+
+    // Error message
+    sf::Text errorText;
+
+    // Cursor
+    sf::RectangleShape cursor;
+    bool cursorVisible = true;
+    bool inputBoxActive = false;
+
+    // Text parameters
+    void setupTextParameters() {
+        // Username label
+        usernameLabel.setFont(font);
+        usernameLabel.setString("Username:");
+        usernameLabel.setCharacterSize(20);
+        usernameLabel.setFillColor(sf::Color::White);
+        usernameLabel.setPosition(100.f, 150.f);
+
+        // Username text
+        usernameText.setFont(font);
+        usernameText.setCharacterSize(20);
+        usernameText.setFillColor(sf::Color::Black);
+        usernameText.setPosition(220.f, 150.f);
+
+        // Password label
+        passwordLabel.setFont(font);
+        passwordLabel.setString("Password:");
+        passwordLabel.setCharacterSize(20);
+        passwordLabel.setFillColor(sf::Color::White);
+        passwordLabel.setPosition(100.f, 200.f);
+
+        // Password text
+        passwordText.setFont(font);
+        passwordText.setCharacterSize(20);
+        passwordText.setFillColor(sf::Color::Black);
+        passwordText.setPosition(220.f, 200.f);
+
+        // Error text
+        errorText.setFont(font);
+        errorText.setCharacterSize(18);
+        errorText.setFillColor(sf::Color::Red);
+        errorText.setPosition(100.f, 350.f);
+    }
+
+    // Input box parameters
+    void setupInputBoxParameters() {
+        // Username input box
+        usernameInputBox.setSize(sf::Vector2f(200.f, 30.f));
+        usernameInputBox.setFillColor(sf::Color::White);
+        usernameInputBox.setPosition(220.f, 150.f);
+        usernameInputBox.setOutlineThickness(1.f);
+        usernameInputBox.setOutlineColor(sf::Color::White);
+
+        // Password input box
+        passwordInputBox.setSize(sf::Vector2f(200.f, 30.f));
+        passwordInputBox.setFillColor(sf::Color::White);
+        passwordInputBox.setPosition(220.f, 200.f);
+        passwordInputBox.setOutlineThickness(1.f);
+        passwordInputBox.setOutlineColor(sf::Color::White);
+    }
+
+    // Cursor parameters
+    void setupCursorParameters() {
+        cursor.setSize(sf::Vector2f(1.f, 20.f));
+        cursor.setFillColor(sf::Color::Black);
+        cursor.setPosition(225.f, 175.f);
+    }
+
+    // Login button parameters
+    void setupLoginButtonParameters() {
+        loginButton.setSize(sf::Vector2f(100.f, 50.f));
+        loginButton.setFillColor(sf::Color(30, 144, 255)); // Blue color
+        loginButton.setPosition(220.f, 270.f);
+
+        loginButtonText.setFont(font);
+        loginButtonText.setString("Login");
+        loginButtonText.setCharacterSize(20);
+        loginButtonText.setFillColor(sf::Color::White);
+        loginButtonText.setPosition(250.f, 280.f);
+    }
+
+    // Main loop
+    void mainLoop(sf::RenderWindow& window) {
+        while (window.isOpen()) {
+            // Handle events
+            handleEvents(window);
+
+            // Update cursor visibility
+            updateCursor();
+
+            // Draw everything
+            window.clear(sf::Color(30, 30, 30));
+            drawElements(window);
+            window.display();
+
+            // Pause to control refresh rate
+            std::this_thread::sleep_for(std::chrono::milliseconds(50));
+        }
+    }
+
+    // Handle events
+    void handleEvents(sf::RenderWindow& window) {
+        sf::Event event;
+        while (window.pollEvent(event)) {
+            switch (event.type) {
+                case sf::Event::Closed:
+                    window.close();
+                    break;
+                case sf::Event::TextEntered:
+                    handleTextInput(event);
+                    break;
+                case sf::Event::MouseButtonPressed:
+                    handleMouseClick(window, event);
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+    // Handle text input
+    void handleTextInput(sf::Event& event) {
+        if (inputBoxActive) {
+            if (event.text.unicode == 8) { // Backspace
+                if (activeInputBox == 0 && !usernameString.empty()) {
+                    usernameString.pop_back();
+                } else if (activeInputBox == 1 && !passwordString.empty()) {
+                    passwordString.pop_back();
+                }
+            } else if (event.text.unicode < 128) {
+                if (activeInputBox == 0 && usernameText.getGlobalBounds().width < 180.f) {
+                    usernameString += static_cast<char>(event.text.unicode);
+                } else if (activeInputBox == 1 && passwordText.getGlobalBounds().width < 180.f) {
+                    passwordString += static_cast<char>(event.text.unicode);
+                }
+            }
+        }
+    }
+
+    // Handle mouse click
+    void handleMouseClick(sf::RenderWindow& window, sf::Event& event) {
+        sf::Vector2f mousePos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
+        if (usernameInputBox.getGlobalBounds().contains(mousePos)) {
+            inputBoxActive = true;
+            activeInputBox = 0;
+        } else if (passwordInputBox.getGlobalBounds().contains(mousePos)) {
+            inputBoxActive = true;
+            activeInputBox = 1;
+        } else {
+            inputBoxActive = false;
+        }
+
+        if (loginButton.getGlobalBounds().contains(mousePos)) {
+            // Perform login action
+            loginAction(window);
+        }
+    }
+
+    // Update cursor visibility
+    void updateCursor() {
+        static sf::Clock cursorTimer;
+        if (cursorTimer.getElapsedTime().asMilliseconds() > 500) {
+            cursorVisible = !cursorVisible;
+            cursorTimer.restart();
+        }
+    }
+
+    // Draw all elements
+    void drawElements(sf::RenderWindow& window) {
+        // Draw labels
+        window.draw(usernameLabel);
+        window.draw(passwordLabel);
+
+        // Draw input boxes
+        window.draw(usernameInputBox);
+        window.draw(passwordInputBox);
+
+        // Draw input text
+        usernameText.setString(usernameString);
+        window.draw(usernameText);
+        passwordText.setString(passwordString);
+        window.draw(passwordText);
+
+        // Draw cursor if input box is active
+        if (inputBoxActive && cursorVisible) {
+            if (activeInputBox == 0) {
+                cursor.setPosition(usernameText.getGlobalBounds().left + usernameText.getGlobalBounds().width, 175.f);
+            } else if (activeInputBox == 1) {
+                cursor.setPosition(passwordText.getGlobalBounds().left + passwordText.getGlobalBounds().width, 225.f);
+            }
+            window.draw(cursor);
+        }
+
+        // Draw login button
+        window.draw(loginButton);
+        window.draw(loginButtonText);
+
+        // Draw error text
+        window.draw(errorText);
+    }
+
+    // Track which input box is active (0 for username, 1 for password)
+    int activeInputBox = 0;
+
+    // Text entered in input boxes
+    std::string usernameString;
+    std::string passwordString;
+
+    // Function to handle login action
+    // Function to handle login action
+void loginAction(sf::RenderWindow& window) {
+    // Retrieve the username and password entered by the user
+    std::string username = usernameString;
+    std::string password = passwordString;
+
+    // Define MySQL connection details
+    struct connection_details mysql_details = {
+        "localhost",
+        "root",
+        "Saurabh@1335",
+        "userdata"
+    };
+
+    // Set up MySQL connection
+    MYSQL *connection = mysql_connection_setup(mysql_details);
+    if (!connection) {
+        errorText.setString("Failed to connect to MySQL server");
+        return;
+    }
+
+    // Construct SQL query to retrieve user information
+    std::ostringstream query;
+    query << "SELECT * FROM datas WHERE username='" << username << "' AND password='" << password << "'";
+
+    // Execute the query
+    MYSQL_RES* res = mysql_perform_query(connection, query.str().c_str());
+    if (!res) {
+        errorText.setString("Failed to execute MySQL query");
+        mysql_close(connection);
+        return;
+    }
+
+    // Check if any rows were returned
+    MYSQL_ROW row = mysql_fetch_row(res);
+    if (row) {
+        // User authenticated successfully
+        window.clear();
+        Options Options(window,{"financials","stats","recomendations","inventory"});
+        std::cout<<"give options to users";
+    } else {
+        // Invalid credentials
+        errorText.setString("Invalid username or password");
+    }
+
+    // Free resources and close MySQL connection
+    mysql_free_result(res);
+    mysql_close(connection);
+}
+
+
+};
+//......................................................................................
 int main() {
     sf::RenderWindow window(sf::VideoMode::getDesktopMode(), "Genesis trial", sf::Style::Fullscreen);
-    home obj(window);
+    LoginPage loginPage(window);
     return 0;
 }
