@@ -493,7 +493,7 @@ private:
         static sf::Clock cursorTimer;
         if (cursorTimer.getElapsedTime().asMilliseconds() > 500) {
             cursorVisible = !cursorVisible;
-            cursorTimer.restart();
+            cursorTimer.restart();     
         }
     }
 
@@ -588,12 +588,84 @@ void loginAction(sf::RenderWindow& window) {
     mysql_free_result(res);
     mysql_close(connection);
 }
-
-
 };
 //......................................................................................
+
+class introPage{
+    public:
+    introPage(){
+    // Create the window
+    sf::RenderWindow window(sf::VideoMode::getFullscreenModes()[0], "Supply Chain Management System", sf::Style::Fullscreen);
+
+    // Set background color to black
+    window.clear(sf::Color::Black);
+
+    // Create headline text
+    sf::Font font;
+    if (!font.loadFromFile("Arial.ttf")) {
+        std::cerr << "Error loading font file" << std::endl;
+    }
+
+    sf::Text headline("Supply Chain Management System", font, 42);
+    headline.setFillColor(sf::Color::White);
+    headline.setStyle(sf::Text::Bold);
+    // Set position to center
+    headline.setPosition((window.getSize().x - headline.getGlobalBounds().width) / 2, 50);
+
+    // Create "get started" text inside a square shape
+    sf::RectangleShape button(sf::Vector2f(200, 50));
+    button.setFillColor(sf::Color::Blue); // Dark blue color
+    button.setPosition((window.getSize().x - button.getSize().x) / 2, 250);
+
+    sf::Text buttonText("Get Started", font, 30);
+    buttonText.setFillColor(sf::Color::White);
+    buttonText.setStyle(sf::Text::Bold);
+    // Set position of text inside the button
+    buttonText.setPosition(button.getPosition().x + (button.getSize().x - buttonText.getGlobalBounds().width) / 2, button.getPosition().y + (button.getSize().y - buttonText.getGlobalBounds().height) / 2);
+
+    // Create "make it easy" text
+    sf::Text footerText("Created By Synergenius", font, 27);
+    footerText.setFillColor(sf::Color::White);
+    footerText.setStyle(sf::Text::Bold);
+    // Set position to center
+    footerText.setPosition((window.getSize().x - footerText.getGlobalBounds().width) / 2, 500);
+
+    // Main loop
+    while (window.isOpen()) {
+        // Process events
+        sf::Event event;
+        while (window.pollEvent(event)) {
+            if (event.type == sf::Event::Closed)
+                window.close();
+            // Check if the left mouse button is pressed and the mouse cursor is within the button's area
+            else if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
+                sf::Vector2i mousePosition = sf::Mouse::getPosition(window);
+                if (button.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePosition))) {
+                    // Call the emp function
+                    LoginPage loginPage(window);
+                }
+            }
+        }
+
+        // Clear the window
+        window.clear();
+
+        // Draw elements
+        window.draw(headline);
+        window.draw(button);
+        window.draw(buttonText);
+        window.draw(footerText);
+
+        // Display content
+        window.display();
+    }
+    }
+
+};
+
+
+//......................................................................................
 int main() {
-    sf::RenderWindow window(sf::VideoMode::getDesktopMode(), "Genesis trial", sf::Style::Fullscreen);
-    LoginPage loginPage(window);
+    introPage obj1;
     return 0;
 }
