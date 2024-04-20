@@ -8,110 +8,32 @@
 #include "mysql_functions.h"
 using namespace std;
 
-class Options2{
-    public:
-    
-    Options2(sf::RenderWindow& window, const std::vector<std::string>& texts) {
-        numSquares = texts.size();
-        squares.resize(numSquares);
-
-        sf::Font font;
-        if (!font.loadFromFile("Arial.ttf")) {
-            std::cerr << "Error loading font file" << std::endl;
-            return;
-        }
-
-        sf::Text headline("Choose from the following options", font, 40);
-        headline.setFillColor(sf::Color::White);
-        headline.setStyle(sf::Text::Bold);
-        headline.setPosition((window.getSize().x - headline.getLocalBounds().width) / 2, 50.f);
-
-        float x = (window.getSize().x - 200 * numSquares - 20 * (numSquares - 1)) / 2.f; // Center the row of squares
-
-        for (int i = 0; i < numSquares; ++i) {
-            squares[i].rectangle.setSize(sf::Vector2f(200.f, 100.f));
-            squares[i].rectangle.setFillColor(sf::Color::Blue);
-            squares[i].rectangle.setPosition(x, 250.f);
-
-            squares[i].text.setString(texts[i]);
-            squares[i].text.setFont(font);
-            squares[i].text.setCharacterSize(20);
-            squares[i].text.setFillColor(sf::Color::White);
-            squares[i].text.setPosition(x + 30.f, 290.f);
-
-            x += 220.f;
-        }
-
-        window.draw(headline);
-        for (const auto& shape : squares) {
-            window.draw(shape.rectangle);
-            window.draw(shape.text);
-        }
-        window.display();
-
-        while (window.isOpen()) {
-            sf::Event event;
-            while (window.pollEvent(event)) {
-                if (event.type == sf::Event::Closed)
-                    window.close();
-
-                if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
-                    sf::Vector2i mousePosition = sf::Mouse::getPosition(window);
-                    for (int i = 0; i < this->numSquares; ++i) {
-                        if (this->squares[i].rectangle.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePosition))) {
-                            switch (i) {
-                                case 0:
-                                    cout << i << endl;
-                                    window.clear();
-                                    window.close();
-                                    // Financials();
-                                    break;
-                                case 1:
-                                    cout << i << endl;
-                                    window.clear();
-                                    window.close();
-                                    // Stats();
-                                    break;
-                                case 2:
-                                    cout << i << endl;
-                                    window.clear();
-                                    window.close();
-                                    // Recommendations();
-                                    
-                                    break;
-                                case 3:
-                                    cout << i << endl;
-                                    window.clear();
-                                    window.close();
-                                    // Inventory();
-                                    break;
-                                default:
-                                    break;
-                            }
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    struct ShapeWithText {
+struct ShapeWithText {
         sf::RectangleShape rectangle;
         sf::Text text;
     };
-
+class funtionality {
+public:
+    void Financials();
+    void Stats();
+    void Recommendations();
+    void Inventory();
+};
+class Options:funtionality{
+    public:
     int numSquares;
     std::vector<ShapeWithText> squares;
-
+    Options(sf::RenderWindow& window, const std::vector<std::string>& texts);
+     
 };
+
 class exits
 {
     public:
     exits()
     {
         sf::RenderWindow window(sf::VideoMode::getDesktopMode(), "Genesis trial", sf::Style::Fullscreen);
-        Options2 options2(window,{"financials","stats","recomendations","inventory"});
+        Options options(window,{"financials","stats","recomendations","inventory"});
     }
 };
 class inputs{
@@ -175,10 +97,8 @@ class inputs{
         }
 };
 
-class funtionality
-{
-    public:
-    void Financials() {
+
+    void funtionality::Financials() {
         
         cout<<"............................................................."<<endl;
         cout<<endl<<"1] Show financials "<<endl<<endl<<"2] exit "<<endl<<endl;
@@ -203,7 +123,7 @@ class funtionality
         
     }
 
-    void Stats() {
+    void funtionality::Stats() {
         cout<<"............................................................."<<endl;
         cout<<endl<<"1] Show Stats "<<endl<<endl<<"2] exit "<<endl<<endl;
         cout<<"............................................................."<<endl<<endl;
@@ -227,12 +147,12 @@ class funtionality
         
     }
 
-    void Recommendations() {
+    void  funtionality::Recommendations() {
         
         
     }
 
-    void Inventory() {
+    void  funtionality::Inventory() {
         inputs obj;
         obj.add();
         
@@ -241,10 +161,9 @@ class funtionality
         
    
 
-};
-class Options :public funtionality{
-public:
-    Options(sf::RenderWindow& window, const std::vector<std::string>& texts) {
+
+
+    Options::Options(sf::RenderWindow& window, const std::vector<std::string>& texts) {
         numSquares = texts.size();
         squares.resize(numSquares);
 
@@ -295,7 +214,7 @@ public:
                             switch (i) {
                                 case 0:
                                     cout << i << endl;
-                                    window.clear();
+                                    window.clear(); 
                                     window.close();
                                     Financials();
                                     break;
@@ -328,23 +247,6 @@ public:
             }
         }
     }
-
-    struct ShapeWithText {
-        sf::RectangleShape rectangle;
-        sf::Text text;
-    };
-
-    int numSquares;
-    std::vector<ShapeWithText> squares;
-};
-
-class output{
-    public:
-    
-};
-
-
-
 
 //...............................................................................................
 
