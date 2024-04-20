@@ -6,14 +6,100 @@
 #include <chrono>
 #include <thread>
 #include "mysql_functions.h"
+
 using namespace std;
 bool flag=true;
 std::string username = "";
 std::string password = "";
+connection_details mysql_details = {"localhost", "root", "root", "mydb"};
+int userid=27;
+int current_capital=1000000;
+int initial_capital=900000;
 struct ShapeWithText {
         sf::RectangleShape rectangle;
         sf::Text text;
     };
+
+struct Feedback {
+    string sender_username;
+    string feedback_text;
+};
+
+
+
+void viewFeedback() {
+    // Construct the SQL query to fetch feedback along with user information using JOIN
+    string query = "SELECT tblUsers.uname, tblUsers.address, tblUsers.phone, Feedback.feedback_text "
+                   "FROM Feedback "
+                   "JOIN tblUsers ON tblUsers.userid = Feedback.sender_id"; // Assuming userid is the primary key in the Users table
+
+    // Execute the query
+    MYSQL* connection = mysql_init(NULL);
+    if (connection == NULL) {
+        cerr << "Error initializing MySQL connection." << endl;
+        return;
+    }
+
+    if (mysql_real_connect(connection, "localhost", "root", "root", "mydb", 0, NULL, 0) == NULL) {
+        cerr << "Error connecting to MySQL database: " << mysql_error(connection) << endl;
+        mysql_close(connection);
+        return;
+    }
+
+    if (mysql_query(connection, query.c_str())) {
+        cerr << "MySQL Query Error: " << mysql_error(connection) << endl;
+        mysql_close(connection);
+        return;
+    }
+
+    // Get the result set
+    MYSQL_RES* result = mysql_store_result(connection);
+    if (result == NULL) {
+        cerr << "Error fetching result set: " << mysql_error(connection) << endl;
+        mysql_close(connection);
+        return;
+    }
+
+    // Check if there are no feedback
+    if (mysql_num_rows(result) == 0) {
+        cout << "No feedback available." << endl;
+    } else {
+        // Print the feedback along with user information
+        cout << "Feedback:" << endl;
+        MYSQL_ROW row;
+        while ((row = mysql_fetch_row(result))) {
+            cout << "Username: " << row[0] << endl;
+            cout << "Address: " << row[1] << endl;
+            cout << "Phone: " << row[2] << endl;
+            cout << "Feedback: " << row[3] << endl;
+            cout << "------------------------" << endl;
+        }
+    }
+
+    // Free the result set
+    mysql_free_result(result);
+
+    mysql_close(connection);
+}
+
+void addFeedback(const Feedback& feedback) {
+    // Construct the SQL insert query
+    ostringstream query;
+    query << "INSERT INTO Feedback (sender_id, feedback_text) SELECT userid, '" << feedback.feedback_text << "' FROM tblUsers WHERE uname = '" << feedback.sender_username << "'";
+
+    // Execute the query
+    MYSQL* connection = mysql_connection_setup(mysql_details);
+    if (mysql_query(connection, query.str().c_str())) {
+        cerr << "MySQL Query Error: " << mysql_error(connection) << std::endl;
+        mysql_close(connection);
+        return;
+    }
+
+    cout << "Feedback added successfully." << endl;
+
+    mysql_close(connection);
+}
+
 class funtionality {
 public:
     void Financials();
@@ -40,54 +126,73 @@ class exits
 };
 class inputs{
     public:
-    vector<string>database1={" Boat Airbudds 141 "," Boat Power Bank 4000 "," Boat Stone 1200 "};
-        vector<string>database2={" 1500 "," 900 "," 4000 "};
-        vector<string>database3={" 100 "," 200 "," 45 "};
+    vector<string>database1={" Bread "," Toast "," Cake "};
+        vector<string>database2={" 30 "," 50 "," 300 "};
+        vector<string>database3={" 300 "," 500 "," 300 "};
     void add()
     {
         cout<<endl<<endl;
         cout<<".................................................................."<<endl<<endl;
         
-        cout<<"Do you Want to add Inventory? "<<endl<<"Yes/No"<<endl;
+        cout<<"Do you Want to continue? "<<endl<<"Yes/No"<<endl;
         string req;
         cin>>req;
         if(tolower(req[0])=='y')
         {
-            cout<<"Enter The Name Of the Product : "<<endl;
-            string temp;
-            cin>>temp;
-            database1.push_back(temp);
-            cout<<"Enter The Prize Of the Product : "<<endl;
-            string temp1;
-            cin>>temp1;
-            database2.push_back(temp1);
-            cout<<"Enter The Quantity Of the Product : "<<endl;
-            string temp2;
-            cin>>temp2;
-            database3.push_back(temp2);
-            
+           cout << "\n1. Add to Inventory\n2. Dispatch Inventory\n 3.Show inventory \n Enter your choice (1-3): ";
+                            int inventoryChoice;
+                            cin >> inventoryChoice;
+                            if (inventoryChoice == 1) {
+                                int product, quantity;
+                                cout << "Enter product price: ";
+                                cin >> product;
+                                cout << "Enter quantity: ";
+                                cin >> quantity;
+
+    // Construct the SQL update query
+    ostringstream query;
+    query << "UPDATE tblUsers SET current_capital = current_capital - " << product*quantity ;
+
+    
+
+    // Execute the query
+    MYSQL *connection = mysql_connection_setup(mysql_details);
+  
+
+    if (mysql_query(connection, query.str().c_str())) {
+        cerr << "MySQL Query Error: " << mysql_error(connection) << std::endl;
+        mysql_close(connection);
+        return;
+    }
+
+    cout << "Updated current_capital in tblUsers." << endl;
+
+    mysql_close(connection);
+
+                            } else if (inventoryChoice == 2) {
+                                int product, quantity;
+                                cout << "Enter product (1. Bread, 2. Toast, 3. Cake): ";
+                                cin >> product;
+                                cout << "Enter quantity: ";
+                                cin >> quantity;
+                                //inventory.dispatchInventory(product, quantity);
+
+                                
+                            } else {
+                                cout << "showing inventory: " << endl;
+                                display();
+                            }
+                          
+            cout<<endl<<endl<<"Press any key and enter to exit ";
+            string tempo;
+            cin>>tempo;
+            exits obj;
             //add data to sql database
-            
-            add();
+        
         }
         else
         {
-            cout<<"do you want to see the inventory? (y,n) "<<endl;
-            char ab;
-            cin>>ab;
-            if(ab=='y')
-            {
-                display();
-                cout<<"Do you want to exit? (press any key and enter ) ";
-                string a;
-                cin>>a;
                 exits obj;
-
-            }
-            else
-            {
-                exits obj;
-            }
         }
     }
         void display()
@@ -103,8 +208,13 @@ class inputs{
                 cout<<"Quantity of the Product : "<<database3[i]<<endl;
                 cout<<endl<<endl;
                 cout<<".................................................................."<<endl<<endl;
-        
+
             }
+            char temp;
+            cout<<"press any key to exit?  ";
+            cin>>temp;
+                exits obj;
+            
         }
 };
 
@@ -120,14 +230,11 @@ class inputs{
         cin>>n;
         if(n==1)
         {
-            //mysql query
             char temp;
-            cout<<"do you want to exit? (y,n) ";
+            cout << "Initial capital invested: " << current_capital << endl<<" capital remaining: " << initial_capital << endl<<" profit/loss: "<< -current_capital+initial_capital<<endl<<" profit/loss in %: "<<(current_capital-initial_capital)/(float)initial_capital<<endl;
+            cout<<"press any key to exit ";
             cin>>temp;
-            if (temp=='y')
-            {
-                exits obj;
-            }
+            exits obj;
         }
         else
         {
@@ -160,24 +267,29 @@ class inputs{
         
     }
     
-    void  funtionality::Recommendations() {
+void  funtionality::Recommendations() {
         cout<<endl<<endl;
         cout<<".................................................................."<<endl<<endl;
-        
+        viewFeedback();
         char temp;
-        if(flag)
-        {
-            cout<<"Do you Want to Give Feedback? (y/n) ";
+        
+            cout<<"Do you Want to send a broadcast message? (y/n) "<<endl;
             cin>>temp;
-            flag=false;
-        }
-        if(temp=='y' || flag==false)
+        
+        
+        if(temp=='y')
         {
-            cout<<"Give any Feedback Related to our service / bugs / improvements we should do / etc / custumer support"<<endl<<endl;
-            string s;
-            cin>>s;
+            //send message
+            Feedback userFeedback;
+            userFeedback.sender_username = username; // Replace with actual username
+            userFeedback.feedback_text ;
+            cout << "Enter your broadcast message: ";
+            cin>>userFeedback.feedback_text;
+
+    // Call addFeedback to insert the feedback
+            addFeedback(userFeedback);
             cout<<endl<<endl;
-            cout<<"Do you want to give another feedback? (y/n) ";
+            cout<<"Do You Want To add Another feedback? (y/n)" ;
             char ch;
             cin>>ch;
             if(ch=='y')
@@ -187,6 +299,7 @@ class inputs{
             else
             {
             cout<<"Do you want to exit? (press any key and enter ) ";
+
             string a;
             cin>>a;
             exits obj;
@@ -198,9 +311,7 @@ class inputs{
         }
         
         
-    }
-
-    void  funtionality::Inventory() {
+    }    void  funtionality::Inventory() {
         inputs obj;
         obj.add();
         
@@ -493,7 +604,7 @@ private:
         static sf::Clock cursorTimer;
         if (cursorTimer.getElapsedTime().asMilliseconds() > 500) {
             cursorVisible = !cursorVisible;
-            cursorTimer.restart();     
+            cursorTimer.restart();
         }
     }
 
@@ -549,8 +660,8 @@ void loginAction(sf::RenderWindow& window) {
     struct connection_details mysql_details = {
         "localhost",
         "root",
-        "Saurabh@1335",
-        "userdata"
+        "root",
+        "mydb"
     };
 
     // Set up MySQL connection
@@ -562,7 +673,7 @@ void loginAction(sf::RenderWindow& window) {
 
     // Construct SQL query to retrieve user information
     std::ostringstream query;
-    query << "SELECT * FROM datas WHERE username='" << username << "' AND password='" << password << "'";
+    query << "SELECT * FROM tblUsers WHERE uname='" << username << "' AND password='" << password << "'";
 
     // Execute the query
     MYSQL_RES* res = mysql_perform_query(connection, query.str().c_str());
@@ -574,23 +685,31 @@ void loginAction(sf::RenderWindow& window) {
 
     // Check if any rows were returned
     MYSQL_ROW row = mysql_fetch_row(res);
+
     if (row) {
         // User authenticated successfully
+        initial_capital=atoi(row[4]);
+        current_capital=atoi(row[5]);
+        userid=atoi(row[0]);
         window.clear();
         Options Options(window,{"financials","recomendations","inventory"});
-        std::cout<<"give options to users";
+        //std::cout<<"give options to users";
+
     } else {
         // Invalid credentials
         errorText.setString("Invalid username or password");
     }
 
+   
+
     // Free resources and close MySQL connection
     mysql_free_result(res);
     mysql_close(connection);
 }
+
+
 };
 //......................................................................................
-
 class introPage{
     public:
     introPage(){
@@ -662,6 +781,10 @@ class introPage{
     }
 
 };
+
+
+
+
 
 
 //......................................................................................
